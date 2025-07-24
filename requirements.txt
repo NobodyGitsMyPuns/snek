@@ -1,0 +1,9 @@
+networkx
+matplotlib
+pandas
+numpy
+scikit-learn
+scipy
+seaborn
+statsmodels
+pygame 
