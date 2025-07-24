@@ -14,7 +14,7 @@ You are free to:
 But please:
 
 - Don’t blame me if it crashes your computer or makes your snake invincible
-- The images and assets wer sourced from pixelbay and are to the best of my knowledge open, however in the 
+- The images and assets wer sourced from pixabay and are to the best of my knowledge open, however in the 
   Event someone messed up, just don't sue me or bother me in a negative way, or do anything that would be less than fun for me. 
 - Don’t sue me for any reason, ever — this is free code made for fun
 - Give credit if you feel like it, but I’m not gonna chase you down
