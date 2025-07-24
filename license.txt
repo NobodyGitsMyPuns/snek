@@ -1,0 +1,24 @@
+# License
+
+This project is provided under the **“Don’t Sue, Have Fun” License** (DSHFL).
+
+You are free to:
+
+- Use it
+- Modify it
+- Break it
+- Share it
+- Learn from it
+- Build on it
+
+But please:
+
+- Don’t blame me if it crashes your computer or makes your snake invincible
+- The images and assets wer sourced from pixelbay and are to the best of my knowledge open, however in the 
+  Event someone messed up, just don't sue me or bother me in a negative way, or do anything that would be less than fun for me. 
+- Don’t sue me for any reason, ever — this is free code made for fun
+- Give credit if you feel like it, but I’m not gonna chase you down
+
+By using this code, you agree to chill and not be a jerk about it.
+
+🧠+🎮 = ❤️
