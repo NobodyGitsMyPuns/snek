@@ -23,7 +23,7 @@ BLOCK_SIZE      = 20
 HIGH_SCORE_FILE = 'highscores.txt'
 
 # Explosion blast radius in blocks
-BLAST_RADIUS    = 1  # 1 for 3x3, 2 for 5x5
+BLAST_RADIUS    = 3  # 1 for 3x3, 2 for 5x5
 
 # -----------------------------------------------------------------------------
 # Setup display
@@ -152,7 +152,45 @@ def display_high_scores():
     pygame.display.update()
     time.sleep(3)
 
-# -----------------------------------------------------------------------------
+def cascade_new_high_score(initials, score):
+    """Cascade the NEW HIGH SCORE text."""
+    text_surf = large_font.render("NEW HIGH SCORE BY " + initials + " " + str(score), True, gold_color)
+    time.sleep(1)
+    x = (screen_width - text_surf.get_width()) // 2
+    y = -text_surf.get_height()
+    target_y = (screen_height - text_surf.get_height()) // 2
+    while y < target_y:
+        draw_background()
+        screen.blit(text_surf, (x, y))
+        pygame.display.update()
+        y += 10
+        clock.tick(30)
+    time.sleep(1)
+
+def check_highscore(initials, score):
+    global highscore   # Declare highscore as a global variable
+    if score > highscore:
+        highscore = score
+        
+        font = pygame.font.Font(None, 36)   # Create a new font object for the message
+        text_new_high_score = font.render("New High Score Achieved: " + str(highscore), True, white)   # Render the message as an image
+        
+        screen.blit(text_new_high_score, [250, 250])   # Display the message on the screen at coordinates (250, 250)
+        pygame.display.flip()   # Update the display with the new high score message
+        
+        waiting = True
+        while waiting:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:   # Wait for the Enter key to be pressed
+                        waiting = False
+        
+        return initials, highscore
+
+    # -----------------------------------------------------------------------------
 # User Initials Input
 # -----------------------------------------------------------------------------
 
@@ -166,8 +204,11 @@ def get_initials():
         pygame.display.update()
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
+                hs = load_high_scores()
+                if len(hs) < 10 or score > hs[-1][1]:
+                    handle_highscore(score, initials)
                 pygame.quit()
-                sys.exit()
+                sys.exit(0)
             if ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_RETURN and len(initials) == 3:
                     return initials
@@ -213,6 +254,17 @@ def explode_tiles(tiles):
         pygame.display.update()
         pygame.time.delay(100)
 
+def handle_highscore(score, initials):
+    """Check and handle new high score state."""
+    scores = load_high_scores()
+    is_new = len(scores) < 10 or score > scores[-1][1]
+
+    if is_new:
+        save_high_score(initials, score)
+        new_high_score_sound.play()
+        cascade_new_high_score(initials, score)
+        display_high_scores()
+
 # -----------------------------------------------------------------------------
 # Main Game Loop
 # -----------------------------------------------------------------------------
@@ -241,6 +293,15 @@ def main():
     change_to       = direction
     speed           = 10
     score           = 0
+    global highscore
+    highscore = 0
+
+    # get high score from file
+    highscore = load_high_scores()
+    if len(highscore) > 0:
+        highscore = highscore[0][1]
+    else:
+        highscore = 0
 
     # Get player initials
     initials = get_initials()
@@ -250,8 +311,23 @@ def main():
         # Event handling
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                #check if it is a new high score
+                hs = load_high_scores()
+                if len(hs) < 10 or score > hs[-1][1]:
+                    new_high_score_sound.play()
+                    initials, scoreHigh = check_highscore(initials, score)
+                    if scoreHigh > highscore:
+                        highscore = scoreHigh
+                        save_high_score(initials, scoreHigh)
+                        cascade_new_high_score(initials, scoreHigh)
+                        #play sound
+                        display_high_scores()
+                    else:
+                        pygame.quit()
+                else:
+                    pygame.quit()
+                    sys.exit(0)
+
             if ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_w and direction != 'DOWN':
                     change_to = 'UP'
@@ -312,11 +388,7 @@ def main():
         if snake_pos in snake_body[1:]:
             gameover_sound.play()
             cascade_you_lose(snake_body, food_pos, gold_food)
-            hs = load_high_scores()
-            if len(hs) < 10 or score > hs[-1][1]:
-                new_high_score_sound.play()
-                save_high_score(initials, score)
-            display_high_scores()
+            handle_highscore(score, initials)
             pygame.quit()
             sys.exit()
 
@@ -367,10 +439,7 @@ def main():
                     head_shot_sound.play()
                     gameover_sound.play()
                     cascade_you_lose(snake_body, food_pos, gold_food)
-                    hs = load_high_scores()
-                    if len(hs) < 10 or score > hs[-1][1]:
-                        save_high_score(initials, score)
-                    display_high_scores()
+                    handle_highscore(score, initials)
                     pygame.quit()
                     sys.exit()
                 else:
@@ -396,12 +465,16 @@ def main():
             pygame.draw.rect(screen, gold_color, pygame.Rect(gold_food[0], gold_food[1], BLOCK_SIZE, BLOCK_SIZE))
 
         # HUD: score and speed
-        hud_text = f"Score: {score}  Speed: {speed}"
+        hud_text = f"Score: {score}  Speed: {speed} High Score: {highscore}"
         hud_surf = font.render(hud_text, True, white)
         screen.blit(hud_surf, (10, 10))
 
         pygame.display.update()
         clock.tick(speed)
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_h]:
+            initials, highscore = check_highscore(initials, score)
 
 # -----------------------------------------------------------------------------
 # Entry Point
