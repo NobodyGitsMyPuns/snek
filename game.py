@@ -102,15 +102,23 @@ def save_high_score(initials, score):
     scores = scores[:10]
     with open(HIGH_SCORE_FILE, 'w') as f:
         for name, pts in scores: f.write(f"{name} {pts}\n")
-
 def display_high_scores():
-    draw_background()
-    render_text_centered("TOP 10 HIGH SCORES", font, white, 50)
-    scores = load_high_scores()
-    for i, (name, pts) in enumerate(scores):
-        render_text_centered(f"{i+1}. {name} - {pts}", font, white, 100 + i * 30)
-    pygame.display.update()
-    time.sleep(3)
+    while True:
+        draw_background()
+        render_text_centered("TOP 10 HIGH SCORES", font, white, 50)
+        scores = load_high_scores()
+        for i, (name, pts) in enumerate(scores):
+            render_text_centered(f"{i+1}. {name} - {pts}", font, white, 100 + i * 30)
+        render_text_centered("[B] Back", font, white, 500)
+        pygame.display.update()
+
+        for ev in pygame.event.get():
+            if ev.type == pygame.QUIT:
+                pygame.quit(); sys.exit()
+            if ev.type == pygame.KEYDOWN:
+                if ev.key == pygame.K_b:
+                    return  # go back to menu
+
 
 def cascade_new_high_score(initials, score):
     text_surf = large_font.render("NEW HIGH SCORE BY " + initials + " " + str(score), True, gold_color)
@@ -184,7 +192,7 @@ def main():
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
                 if is_new_highscore(score): handle_highscore(score, initials)
-                pygame.quit(); sys.exit()
+                return  # return to main_menu()
             if ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_w and direction != 'DOWN': change_to = 'UP'
                 if ev.key == pygame.K_s and direction != 'UP': change_to = 'DOWN'
@@ -261,6 +269,24 @@ def main():
         screen.blit(font.render(hud, True, white), (10, 10))
         pygame.display.update()
         clock.tick(speed)
+def main_menu():
+    while True:
+        draw_background()
+        render_text_centered("SNAKE GAME", large_font, gold_color, 150)
+        render_text_centered("[P] Play", font, white, 250)
+        render_text_centered("[H] High Scores", font, white, 300)
+        render_text_centered("[Q] Quit", font, white, 350)
+        pygame.display.update()
+        for ev in pygame.event.get():
+            if ev.type == pygame.QUIT:
+                pygame.quit(); sys.exit()
+            if ev.type == pygame.KEYDOWN:
+                if ev.key == pygame.K_p:
+                    main()
+                elif ev.key == pygame.K_h:
+                    display_high_scores()
+                elif ev.key == pygame.K_q:
+                    pygame.quit(); sys.exit()
 
 if __name__ == '__main__':
-    main()
+    main_menu()
