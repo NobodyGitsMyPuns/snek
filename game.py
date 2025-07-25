@@ -3,11 +3,11 @@ from PIL import Image
 
 pygame.init()
 pygame.mixer.init()
-
+highscore = 0
 screen_width, screen_height = 800, 600
 BLOCK_SIZE = 20
 HIGH_SCORE_FILE = 'highscores.txt'
-BLAST_RADIUS = 3
+BLAST_RADIUS = 4
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Snake Game')
 
