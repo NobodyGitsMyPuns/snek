@@ -19,6 +19,13 @@
             "request": "launch",
             "file": "${workspaceFolder}/index.html",
             "webRoot": "${workspaceFolder}"
-          }
+        },
+        {
+            "name": "Run Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/game_test.py",
+            "console": "integratedTerminal"
+        }
     ]
 }

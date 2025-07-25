@@ -230,8 +230,7 @@ def main():
             ate = True
         if not ate: snake_body.pop()
         if snake_pos in snake_body[1:]:
-            gameover_sound.play()
-            cascade_you_lose(snake_body, food_pos, gold_food)
+            gameover(score, initials      )
             if is_new_highscore(score): handle_highscore(score, initials)
             pygame.quit(); sys.exit()
 
@@ -275,6 +274,22 @@ def main():
         screen.blit(font.render(hud, True, white), (10, 10))
         pygame.display.update()
         clock.tick(speed)
+
+def display_highscores():
+    draw_background()
+    hud_text = f"High Score: {highscore}"
+    hud_surf = font.render(hud_text, True, white)
+    screen.blit(hud_surf, (10, 10))
+    pygame.display.update()
+    
+    clock.tick(2) # Display for 2 seconds
+
+def gameover(score, initials):  
+    display_highscores()
+    handle_highscore(score, initials)
+    pygame.quit()
+    sys.exit()  
+
 def main_menu():
     while True:
         draw_background()
