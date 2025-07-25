@@ -121,6 +121,11 @@ def display_high_scores():
 
 
 def cascade_new_high_score(initials, score):
+    if is_new_highscore(score):
+        save_high_score(initials, score)
+        new_high_score_sound.play()
+        cascade_new_high_score(initials, score)
+    display_high_scores()
     text_surf = large_font.render("NEW HIGH SCORE BY " + initials + " " + str(score), True, gold_color)
     time.sleep(1)
     x = (screen_width - text_surf.get_width()) // 2
@@ -138,7 +143,8 @@ def handle_highscore(score, initials):
         save_high_score(initials, score)
         new_high_score_sound.play()
         cascade_new_high_score(initials, score)
-        display_high_scores()
+    return  
+
 
 def get_initials():
     initials = ''
